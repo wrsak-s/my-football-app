@@ -29,9 +29,14 @@ else:
         if f.get('home_att') == f.get('away_att'):
             continue
 
+        # แปลงค่า hdp ให้เป็นตัวเลขชัวร์ๆ ก่อน แล้วใส่เครื่องหมายลบสวนกลับไปให้สูตรคำนวณถูกต้อง
+    try:
+        current_hdp = -float(f['hdp'])
+    except:
+        current_hdp = 0  # ถ้าแปลงไม่ได้ให้เป็น 0 เพื่อไม่ให้โปรแกรมพัง
         # --- 🟢 2. โซนคำนวณและแสดงผล (ทำงานเฉพาะคู่ที่ข้อมูลผ่านเกณฑ์) ---
         # คำนวณโอกาสชนะราคาต่อรอง
-        prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], -float(f['hdp']))
+        prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], current_hdp)
 
         # 📝 จุดที่ต้องเปลี่ยนตอนแสดงผลบนหน้าจอ Streamlit (เปลี่ยนจาก home_team เป็น home)
         # สมมติโค้ดเดิมของคุณเขียนแสดงผลไว้ประมาณนี้ ให้เปลี่ยนคีย์เป็น 'home' และ 'away' ครับ:
