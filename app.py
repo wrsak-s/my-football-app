@@ -30,10 +30,11 @@ else:
             continue
 
         # แปลงค่า hdp ให้เป็นตัวเลขชัวร์ๆ ก่อน แล้วใส่เครื่องหมายลบสวนกลับไปให้สูตรคำนวณถูกต้อง
-    try:
-        current_hdp = -float(f['hdp'])
-    except:
-        current_hdp = 0  # ถ้าแปลงไม่ได้ให้เป็น 0 เพื่อไม่ให้โปรแกรมพัง
+        try:
+            current_hdp = -float(f['hdp'])
+        except:
+            current_hdp = 0  # ถ้าแปลงไม่ได้ให้เป็น 0 เพื่อไม่ให้โปรแกรมพัง
+            
         # --- 🟢 2. โซนคำนวณและแสดงผล (ทำงานเฉพาะคู่ที่ข้อมูลผ่านเกณฑ์) ---
         # คำนวณโอกาสชนะราคาต่อรอง
         prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], current_hdp)
