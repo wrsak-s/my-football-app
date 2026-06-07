@@ -46,6 +46,11 @@ def get_live_fixtures():
         return []
 
 def calculate_handicap_prob(home_attack, home_defense, away_attack, away_defense, hdp, league_avg_goals=1.35):
+    # บั๊กมักจะเกิดตรงนี้: ต้องแปลง hdp ให้เป็นตัวเลขทศนิยม (float) ชัวร์ๆ ก่อน
+    try:
+        hdp = float(hdp)
+    except:
+        return {"home_win": 0, "away_win": 0} # ถ้าแปลงไม่ได้ให้คืนค่า 0
     """
     คำนวณความน่าจะเป็นในการ 'ชนะราคาต่อรอง' (Asian Handicap)
     hdp: ราคาต่อรองของทีมเหย้า (เช่น -0.5 คือทีมเหย้าต่อครึ่งลูก)
