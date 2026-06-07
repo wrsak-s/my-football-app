@@ -15,6 +15,9 @@ if not fixtures:
 else:
     analyzed_matches = []
     for f in fixtures:
+        # ดักเช็กราคาแฮนดิแคป หรือ เช็กชื่อทีม
+        if not f.get('handicap') or f.get('handicap') == "":
+            continue  # 👈 ถ้าไม่มีราคาแฮนดิแคป ให้ข้ามคู่นี้ไปเลย ไม่ต้องแสดงผล
         # คำนวณโอกาสชนะราคาต่อรอง
         prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], f['hdp'])
         
