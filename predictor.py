@@ -45,6 +45,56 @@ def get_live_fixtures():
         print(f"Error: {e}")
         return []
 
+# 🔴 1. ฟังก์ชันดึงบอลสด (Live)
+def get_live_fixtures():
+    try:
+        # ดึงข้อมูลจาก Endpoint ที่เป็นบอลสด เช่น /live หรือใส่สถานะ ?status=LIVE
+        response = requests.get(f"{API_BASE_URL}/fixtures?status=LIVE", headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            # แปลงข้อมูลให้อยู่ในรูปแบบ List ของ Dictionary ที่เราต้องการ
+            return format_fixtures_data(data) 
+        return []
+    except Exception as e:
+        print(f"Error fetching live fixtures: {e}")
+        return []
+
+# 📅 2. ฟังก์ชันดึงบอลล่วงหน้า (Upcoming)
+def get_upcoming_fixtures():
+    try:
+        # ดึงข้อมูลจาก Endpoint ที่เป็นบอลล่วงหน้า เช่น /upcoming หรือระบุวันที่แข่งขันของวันนี้/พรุ่งนี้
+        response = requests.get(f"{API_BASE_URL}/fixtures?status=UPCOMING", headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            # แปลงข้อมูลให้อยู่ในรูปแบบ List ของ Dictionary เช่นเดียวกัน
+            return format_fixtures_data(data)
+        return []
+    except Exception as e:
+        print(f"Error fetching upcoming fixtures: {e}")
+        return []
+
+# 🔧 ฟังก์ชันตัวกลางสำหรับจัด Format ข้อมูล (เพื่อส่งต่อไปให้ app.py ใช้งาน)
+def format_fixtures_data(raw_data):
+    formatted_list = []
+    
+    # สมมติว่าโครงสร้างข้อมูลที่ดึงมามีหน้าตาแบบนี้ 
+    # (คุณต้องปรับชื่อคีย์ฝั่งขวา เช่น match['home_team_name'] ให้ตรงกับเว็บบอร์ดหรือ API จริงของคุณ)
+    for match in raw_data.get('matches', []):
+        fixture = {
+            'home': match.get('home_name'),         # ชื่อทีมเหย้า
+            'away': match.get('away_name'),         # ชื่อทีมเยือน
+            'hdp': match.get('handicap_line'),      # ราคาต่อรอง (เช่น -0.5, 0.75)
+            'home_att': match.get('home_attack_rating', 1.0), # ค่าพลังบุกเจ้าบ้าน (ถ้าไม่มีให้ใส่ค่า Default)
+            'home_def': match.get('home_defense_rating', 1.0), # ค่าพลังรับเจ้าบ้าน
+            'away_att': match.get('away_attack_rating', 1.0), # ค่าพลังบุกเยือน
+            'away_def': match.get('away_defense_rating', 1.0)  # ค่าพลังรับเยือน
+        }
+        formatted_list.append(fixture)
+        
+    return formatted_list
+
 def calculate_handicap_prob(home_attack, home_defense, away_attack, away_defense, hdp, league_avg_goals=1.35):
     # บั๊กมักจะเกิดตรงนี้: ต้องแปลง hdp ให้เป็นตัวเลขทศนิยม (float) ชัวร์ๆ ก่อน
     try:
