@@ -31,7 +31,7 @@ else:
 
         # --- 🟢 2. โซนคำนวณและแสดงผล (ทำงานเฉพาะคู่ที่ข้อมูลผ่านเกณฑ์) ---
         # คำนวณโอกาสชนะราคาต่อรอง
-        prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], f['hdp'])
+        prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], -float(f['hdp']))
 
         # 📝 จุดที่ต้องเปลี่ยนตอนแสดงผลบนหน้าจอ Streamlit (เปลี่ยนจาก home_team เป็น home)
         # สมมติโค้ดเดิมของคุณเขียนแสดงผลไว้ประมาณนี้ ให้เปลี่ยนคีย์เป็น 'home' และ 'away' ครับ:
