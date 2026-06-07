@@ -15,9 +15,14 @@ if not fixtures:
 else:
     analyzed_matches = []
     for f in fixtures:
-        # ดักเช็กราคาแฮนดิแคป หรือ เช็กชื่อทีม
-        #if not f.get('handicap') or f.get('handicap') == "":
-            #continue  # 👈 ถ้าไม่มีราคาแฮนดิแคป ให้ข้ามคู่นี้ไปเลย ไม่ต้องแสดงผล
+        
+        # 1. เพิ่มระบบคัดกรอง: ถ้าคู่ไหนไม่มีสถิติรุก-รับ หรือไม่มีราคาแฮนดิแคป ให้ "ข้าม" ทันที
+        if f.get('home_att') is None or f.get('away_att') is None or f.get('hdp') is None:
+            continue  # 👈 สั่งข้ามคู่นี้ไปเลย ไม่เอาไปคำนวณให้โมเดลเพี้ยน
+
+        # 2. ป้องกันกรณีค่าสถิติหลุดมาเป็น 0 (ซึ่งทำให้ Poisson คำนวณไม่ได้)
+        if f['home_att'] == 0 or f['away_att'] == 0:
+            continue  # 👈 สั่งข้ามเช่นกันถ้าค่าเป็น 0
         # คำนวณโอกาสชนะราคาต่อรอง
         prob = calculate_handicap_prob(f['home_att'], f['home_def'], f['away_att'], f['away_def'], f['hdp'])
         
