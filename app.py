@@ -15,7 +15,17 @@ if not fixtures:
 else:
     analyzed_matches = []
     for f in fixtures:
+        # --- 🚨 คำสั่งดักแบบด่วน 🚨 ---
+    
+        # ดักที่ 1: ถ้าไม่มีราคาต่อรอง (hdp เป็น 0 หรือค่าว่าง) ให้ข้ามเลย
+        if f.get('hdp') is None or f.get('hdp') == 0 or f.get('hdp') == "0" or f.get('hdp') == "":
+            continue
         
+        # ดักที่ 2: ถ้าค่าเกมรุกทีมเหย้าและทีมเยือนเท่ากันเป๊ะ (แสดงว่าเป็นค่า Default ของระบบ) ให้ข้าม
+        if f.get('home_att') == f.get('away_att'):
+            continue
+        
+        # ----------------------------
         # 1. เพิ่มระบบคัดกรอง: ถ้าคู่ไหนไม่มีสถิติรุก-รับ หรือไม่มีราคาแฮนดิแคป ให้ "ข้าม" ทันที
         if f.get('home_att') is None or f.get('away_att') is None or f.get('hdp') is None:
             continue  # 👈 สั่งข้ามคู่นี้ไปเลย ไม่เอาไปคำนวณให้โมเดลเพี้ยน
