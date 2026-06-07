@@ -15,7 +15,7 @@ if not fixtures:
 else:
     analyzed_matches = []
     for f in fixtures:
-        st.write(f"คู่: {f.get('home_team')} vs {f.get('away_team')} | Att: {f.get('home_att')} | HDP: {f.get('hdp')}")
+        st.write(f"คู่: {f.get('team_home')} vs {f.get('team_away')} | Att: {f.get('home_att')} | HDP: {f.get('hdp')}")
         # --- 🚨 คำสั่งดักแบบด่วน 🚨 ---
     
         # ดักที่ 1: ถ้าไม่มีราคาต่อรอง (hdp เป็น 0 หรือค่าว่าง) ให้ข้ามเลย
