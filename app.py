@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
-from predictor import get_live_fixtures, calculate_handicap_prob
-#import streamlit as st
-#from predictor import get_live_fixtures, get_upcoming_fixtures, calculate_handicap_prob
+#from predictor import get_live_fixtures, calculate_handicap_prob
+from predictor import get_live_fixtures, get_upcoming_fixtures, calculate_handicap_prob
 
 # 📱 1. สร้างเมนูเลือกโหมดที่แถบข้างซ้าย (เปิดบน iPhone จะมีปุ่มเมนูให้กด)
 mode = st.sidebar.radio(
