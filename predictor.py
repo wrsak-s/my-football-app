@@ -39,6 +39,10 @@ def get_upcoming_fixtures():
 
 # 🔧 ฟังก์ชันตัวกลางสำหรับจัด Format ข้อมูล (เพื่อส่งต่อไปให้ app.py ใช้งาน)
 def format_fixtures_data(raw_data):
+    # 📝 พิมพ์ดูข้อมูลดิบทั้งหมดที่ได้มาจาก API ในหน้า Logs
+    print("--- RAW DATA FROM API ---")
+    print(raw_data) 
+    print("-------------------------")
     formatted_list = []
     
     # สมมติว่าโครงสร้างข้อมูลที่ดึงมามีหน้าตาแบบนี้ 
