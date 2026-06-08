@@ -3,6 +3,12 @@ import pandas as pd
 #from predictor import get_live_fixtures, calculate_handicap_prob
 from predictor import get_live_fixtures, get_upcoming_fixtures, calculate_handicap_prob
 
+# ตั้งค่าหน้าจอเว็บ
+st.set_page_config(page_title="StepV2 - Handicap AI Predictor", layout="wide", page_icon="⚽")
+st.title("⚽ AI Football Step Predictor (สูตรคำนวณราคาต่อรองแฮนดิแคป)")
+st.write("ระบบคำนวณและจัดชุดสเต็ป 3-20 คู่ โดยคัดเลือกทีมที่มี **โอกาสชนะราคาต่อรองสูงสุด** ด้วยโมเดล Poisson")
+st.markdown("---")
+
 # 📱 1. สร้างเมนูเลือกโหมดที่แถบข้างซ้าย (เปิดบน iPhone จะมีปุ่มเมนูให้กด)
 mode = st.sidebar.radio(
     "เลือกโหมดการคำนวณ",
@@ -18,11 +24,7 @@ else:
     fixtures = get_upcoming_fixtures() # 👈 เรียกฟังก์ชันดึงบอลล่วงหน้า
 
 # --- หลังจากตรงนี้ไป เป็นโค้ดลูป for f in fixtures: ตัวเดิมของคุณได้เลยครับ ไม่ต้องแก้เพิ่ม ---
-# ตั้งค่าหน้าจอเว็บ
-st.set_page_config(page_title="StepV2 - Handicap AI Predictor", layout="wide", page_icon="⚽")
-st.title("⚽ AI Football Step Predictor (สูตรคำนวณราคาต่อรองแฮนดิแคป)")
-st.write("ระบบคำนวณและจัดชุดสเต็ป 3-20 คู่ โดยคัดเลือกทีมที่มี **โอกาสชนะราคาต่อรองสูงสุด** ด้วยโมเดล Poisson")
-st.markdown("---")
+
 
 if not fixtures:
     st.warning("ไม่พบข้อมูลการแข่งขันในโหมดที่เลือก ณ ขณะนี้")
