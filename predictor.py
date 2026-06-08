@@ -10,6 +10,12 @@ BASE_URL = "https://v3.football.api-sports.io"
 # 🔴 1. ฟังก์ชันดึงบอลสด (Live)
 def get_live_fixtures():
     try:
+        # 📅 ดึงวันที่ปัจจุบันในรูปแบบ ปปปป-ดด-วว (เช่น 2026-06-08)
+        today_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # ส่งวันที่แนบไปกับ URL ของ API (ปรับตามโครงสร้าง API ของคุณ เช่น &date=... หรือ ?date=...)
+        url = f"{BASE_URL}/fixtures?date={today_date}"
+        
         # ดึงข้อมูลจาก Endpoint ที่เป็นบอลสด เช่น /live หรือใส่สถานะ ?status=LIVE
         response = requests.get(f"{BASE_URL}/fixtures?status=LIVE", headers=headers)
         
