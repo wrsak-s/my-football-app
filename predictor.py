@@ -5,73 +5,69 @@ from scipy.stats import poisson
 
 # 💡 สมัครรับ Key ฟรีได้ที่ https://dashboard.api-football.com/
 API_KEY = "daae70ff813054f6edf2cbf93151d7de" 
-BASE_URL = "https://v3.football.api-sports.io"
+BASE_URL = "https://v3.football.api-sports.io/fixtures"
+HEADERS = {
+    'x-rapidapi-host': "v3.football.api-sports.io",
+    'x-rapidapi-key': "daae70ff813054f6edf2cbf93151d7de"
+}
 
 # 🔴 1. ฟังก์ชันดึงบอลสด (Live)
 def get_live_fixtures():
     try:
-        # ดึงข้อมูลจาก Endpoint ที่เป็นบอลสด เช่น /live หรือใส่สถานะ ?status=LIVE
-        response = requests.get(f"{BASE_URL}/fixtures?status=LIVE", headers=headers)
-        
+        # ส่งพารามิเตอร์ live=all ไปดึงบอลที่กำลังเตะสด
+        response = requests.get(BASE_URL, headers=HEADERS, params={"live": "all"})
         if response.status_code == 200:
-            data = response.json()
-            # แปลงข้อมูลให้อยู่ในรูปแบบ List ของ Dictionary ที่เราต้องการ
-            return format_fixtures_data(data) 
+            res_data = response.json()
+            return parse_api_football_data(res_data)
         return []
     except Exception as e:
-        print(f"Error fetching live fixtures: {e}")
+        print(f"Live API Error: {e}")
         return []
 
 # 📅 2. ฟังก์ชันดึงบอลล่วงหน้า (Upcoming)
 def get_upcoming_fixtures():
     try:
-        # 📅 ดึงวันที่ปัจจุบันในรูปแบบ ปปปป-ดด-วว (เช่น 2026-06-08)
-        today_date = datetime.now().strftime('%Y-%m-%d')
-        print("--- DATE ---")
-        print(today_date) 
-        print("-------------------------")
-        # ส่งวันที่แนบไปกับ URL ของ API (ปรับตามโครงสร้าง API ของคุณ เช่น &date=... หรือ ?date=...)
-        url = f"{BASE_URL}/fixtures?date={today_date}"
+        # บอลล่วงหน้า บังคับส่งพารามิเตอร์แค่วันที่แข่งขัน (ดึงของวันนี้ขึ้นมาวิเคราะห์ล่วงหน้า)
+        from datetime import datetime
+        today = datetime.now().strftime('%Y-%m-%d')
         
-        # ดึงข้อมูลจาก Endpoint ที่เป็นบอลล่วงหน้า เช่น /upcoming หรือระบุวันที่แข่งขันของวันนี้/พรุ่งนี้
-        response = requests.get(f"{BASE_URL}/fixtures?status=UPCOMING", headers=headers)
-        
+        # ส่งพารามิเตอร์ date เพื่อดึงคู่ที่จะเตะทั้งหมดในวันนี้
+        response = requests.get(BASE_URL, headers=HEADERS, params={"date": today})
         if response.status_code == 200:
-            data = response.json()
-            # แปลงข้อมูลให้อยู่ในรูปแบบ List ของ Dictionary เช่นเดียวกัน
-            return format_fixtures_data(data)
+            res_data = response.json()
+            return parse_api_football_data(res_data)
         return []
     except Exception as e:
-        print(f"Error fetching upcoming fixtures: {e}")
+        print(f"Upcoming API Error: {e}")
         return []
 
-# 🔧 ฟังก์ชันตัวกลางสำหรับจัด Format ข้อมูล (เพื่อส่งต่อไปให้ app.py ใช้งาน)
-def format_fixtures_data(raw_data):
-    # 📝 พิมพ์ดูข้อมูลดิบทั้งหมดที่ได้มาจาก API ในหน้า Logs
-    print("--- RAW DATA FROM API ---")
-    print(raw_data) 
-    print("-------------------------")
-    formatted_list = []
+# 🔧 3. ฟังก์ชันจัด Format ข้อมูล (ใช้โครงสร้างเดิมของคุณที่รันผ่านชัวร์ๆ)
+def parse_api_football_data(res_data):
+    actual_fixtures = []
     
-    # สมมติว่าโครงสร้างข้อมูลที่ดึงมามีหน้าตาแบบนี้ 
-    # (คุณต้องปรับชื่อคีย์ฝั่งขวา เช่น match['home_team_name'] ให้ตรงกับเว็บบอร์ดหรือ API จริงของคุณ)
-    for match in raw_data.get('matches', []):
-        fixture = {
-            "match_id": match.get('fixture_id'),
-            "league": match.get('league_name'),
-            "home": match.get('home_name'),         # ชื่อทีมเหย้า
-            "away": match.get('away_name'),         # ชื่อทีมเยือน
-            "home_att": match.get('home_attack_rating', 1.4), # ค่าพลังบุกเจ้าบ้าน (ถ้าไม่มีให้ใส่ค่า Default)
-            "home_def": match.get('home_defense_rating', 0.8), # ค่าพลังรับเจ้าบ้าน
-            "away_att": match.get('away_attack_rating', 1.0), # ค่าพลังบุกเยือน
-            "away_def": match.get('away_defense_rating', 1.2),  # ค่าพลังรับเยือน
-            "hdp": match.get('handicap_line'),      # ราคาต่อรอง (เช่น -0.5, 0.75)
-            "odds_home": 1.85,  # ราคาจ่ายแบบเอเชียนแฮนดิแคปมักจะอยู่แถวๆ 1.80 - 2.00
-            "odds_away": 1.95
-        }
-        formatted_list.append(fixture)
+    # ดึงลูปจากคำว่า 'response' ตามโครงสร้างของ API-Football
+    for item in res_data.get('response', []):
         
-    return formatted_list
+        # สร้าง Mock ราคาต่อรอง (หรือถ้ามีโค้ดดึงราคาจริง ก็เอามาใส่ตรงนี้ครับ)
+        import random
+        mock_hdp = random.choice([-0.25, -0.5, -0.75, -1.0, 0.25, 0.5, 0.75])
+        
+        # ใช้โครงสร้างเดิมของคุณเป๊ะๆ หน้าเว็บจะได้ไม่พัง
+        actual_fixtures.append({
+            "match_id": item['fixture']['id'],
+            "league": item['league']['name'],
+            "home": item['teams']['home']['name'],
+            "away": item['teams']['away']['name'],
+            "home_att": 1.4, 
+            "home_def": 0.8,
+            "away_att": 1.0,
+            "away_def": 1.2,
+            "hdp": mock_hdp,  
+            "odds_home": 1.85, 
+            "odds_away": 1.95
+        })
+        
+    return actual_fixtures
  
 """
 def get_live_fixtures():
