@@ -32,7 +32,9 @@ def get_upcoming_fixtures():
         today = datetime.now().strftime('%Y-%m-%d')
         
         # ส่งพารามิเตอร์ date เพื่อดึงคู่ที่จะเตะทั้งหมดในวันนี้
-        response = requests.get(BASE_URL, headers=HEADERS, params={"date": today})
+        #response = requests.get(BASE_URL, headers=HEADERS, params={"date": today})
+        # เปลี่ยนจาก params={"date": today} เป็นขอ 50 นัดถัดไปแทน
+        response = requests.get(API_URL, headers=HEADERS, params={"next": 50})
         if response.status_code == 200:
             res_data = response.json()
             return parse_api_football_data(res_data)
