@@ -30,7 +30,8 @@ def get_upcoming_fixtures():
         # บอลล่วงหน้า บังคับส่งพารามิเตอร์แค่วันที่แข่งขัน (ดึงของวันนี้ขึ้นมาวิเคราะห์ล่วงหน้า)
         from datetime import datetime
         today = datetime.now().strftime('%Y-%m-%d')
-        
+        # 📝 จุดตรวจ: พิมพ์ดู URL และ Headers ว่าส่งไปถูกต้องไหม
+        print(f"📡 กำลังยิง API ไปที่: {BASE_URL} | วันที่: {today}")
         # ส่งพารามิเตอร์ date เพื่อดึงคู่ที่จะเตะทั้งหมดในวันนี้
         #response = requests.get(BASE_URL, headers=HEADERS, params={"date": today})
         # เปลี่ยนจาก params={"date": today} เป็นขอ 50 นัดถัดไปแทน
